@@ -1,8 +1,8 @@
 ﻿#include <Windows.h>
 #include <iostream>
 using namespace std;
-#define FILE_PATH L"C:/Users/valda/source/repos/semester#6/ОСИ/OS_Lab9/OS09_01/OS09_01.txt"
-#define READ_BYTES 152
+#define FILE_PATH L"C:/Users/valda/source/repos/semester#6/ОСИ/OS_Lab9/OS09_01.txt"
+#define READ_BYTES 185
 
 BOOL printFileInfo(LPWSTR FileName);
 string getFileName(wchar_t* filePath);
@@ -14,8 +14,11 @@ int main()
 {
     setlocale(LC_ALL, "ru");
     LPWSTR path = (LPWSTR)FILE_PATH;
+    cout << "\n======================================\n\n";
     printFileInfo(path);
+    cout << "\n\n======================================";
     printFileTxt(path);
+    cout << "\n======================================\n";
 }
 
 
@@ -71,7 +74,7 @@ BOOL printFileTxt(LPWSTR path)
         &countBytes, 
         NULL);
     if (!b) throw "[ERROR] Readfile throwed exception.";
-    cout << "\n\nPrint file (" << countBytes << " bytes):\n" << buf << '\n';
+    cout << "\n\n\tPrint file (" << countBytes << " bytes)\n" << buf << '\n';
 }
 
 
