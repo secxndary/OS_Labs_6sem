@@ -1,20 +1,108 @@
-﻿// OS09_01.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
+﻿#include <Windows.h>
 #include <iostream>
+using namespace std;
+#define FILE_PATH L"C:/Users/valda/source/repos/semester#6/ОСИ/OS_Lab9/OS09_01/OS09_01.txt"
+#define READ_BYTES 152
+
+BOOL printFileInfo(LPWSTR FileName);
+string getFileName(wchar_t* filePath);
+LPCWSTR getFileType(HANDLE file);
+BOOL printFileTxt(LPWSTR FileName);
+
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    setlocale(LC_ALL, "ru");
+    LPWSTR path = (LPWSTR)FILE_PATH;
+    printFileInfo(path);
+    printFileTxt(path);
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+
+BOOL printFileInfo(LPWSTR path) 
+{
+    HANDLE file = CreateFile(
+        path,
+        GENERIC_READ,
+        NULL,
+        NULL,
+        OPEN_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    SYSTEMTIME sysTime;
+    BY_HANDLE_FILE_INFORMATION fi;
+    BOOL fResult = GetFileInformationByHandle(file, &fi);
+    if (fResult) 
+    {
+        cout << "File name:\t" << getFileName((wchar_t*)FILE_PATH);
+        wcout << "\nFile type:\t" << getFileType(file);
+        cout << "\nFile size:\t" << fi.nFileSizeLow << " bytes";
+        FileTimeToSystemTime(&fi.ftCreationTime, &sysTime);
+        cout << "\nCreate time:\t" << sysTime.wDay << '.' << sysTime.wMonth << '.' << sysTime.wYear << " " << sysTime.wHour + 3 << '.' << sysTime.wMinute << '.' << sysTime.wSecond;
+        FileTimeToSystemTime(&fi.ftLastWriteTime, &sysTime);
+        cout << "\nUpdate time:\t" << sysTime.wDay << '.' << sysTime.wMonth << '.' << sysTime.wYear << " " << sysTime.wHour + 3 << '.' << sysTime.wMinute << '.' << sysTime.wSecond;
+    }
+    CloseHandle(file);
+    return true;
+}
+
+
+
+BOOL printFileTxt(LPWSTR path) 
+{
+    HANDLE file = CreateFile(
+        path,
+        GENERIC_READ,
+        NULL,
+        NULL,
+        OPEN_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    char buf[1024];
+    DWORD countBytes = NULL;
+    ZeroMemory(buf, sizeof(buf));
+    BOOL b = ReadFile(
+        file, 
+        &buf, 
+        READ_BYTES, 
+        &countBytes, 
+        NULL);
+    if (!b) throw "[ERROR] Readfile throwed exception.";
+    cout << "\n\nPrint file (" << countBytes << " bytes):\n" << buf << '\n';
+}
+
+
+
+LPCWSTR getFileType(HANDLE file)
+{
+    switch (GetFileType(file)) 
+    {
+    case FILE_TYPE_UNKNOWN:
+        return L"FILE_TYPE_UNKNOWN";
+    case FILE_TYPE_DISK:
+        return L"FILE_TYPE_DISK";
+    case FILE_TYPE_CHAR:
+        return L"FILE_TYPE_CHAR";
+    case FILE_TYPE_PIPE:
+        return L"FILE_TYPE_PIPE";
+    case FILE_TYPE_REMOTE:
+        return L"FILE_TYPE_REMOTE";
+    default:
+        return L"[ERROR]: WRITE FILE TYPE";
+    }
+}
+
+
+
+string getFileName(wchar_t* filePath) 
+{
+    wstring ws(filePath);
+    string filename(ws.begin(), ws.end());
+    const size_t last_slash_idx = filename.find_last_of("\\/");
+    if (string::npos != last_slash_idx)
+        filename.erase(0, last_slash_idx + 1);
+    return filename;
+}
