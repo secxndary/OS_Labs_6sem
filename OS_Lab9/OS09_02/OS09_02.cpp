@@ -26,10 +26,11 @@ BOOL printFileText(LPWSTR fileName)
 	}
 	catch (const char* em) 
 	{
-		cout << "[ERROR] " << em << endl;
+		cout << em << endl;
 		return false;
 	}
 }
+
 
 
 
@@ -66,7 +67,6 @@ BOOL delRowFileTxt(LPWSTR fileName, DWORD row)
 		CloseHandle(hf);
 
 		HANDLE hAppend = CreateFile(fileName, GENERIC_WRITE, NULL, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
 		char editedBuf[1024];
 		ZeroMemory(editedBuf, sizeof(editedBuf));
 
@@ -112,7 +112,11 @@ BOOL delRowFileTxt(LPWSTR fileName, DWORD row)
 	}
 }
 
-int main() {
+
+
+
+int main() 
+{
 	setlocale(LC_ALL, "ru");
 	LPWSTR file = (LPWSTR)FILE_PATH;
 

@@ -4,22 +4,42 @@ using namespace std;
 #define FILE_PATH L"C:/Users/valda/source/repos/semester#6/ОСИ/OS_Lab9/OS09_01.txt"
 #define READ_BYTES 185
 
-BOOL printFileInfo(LPWSTR FileName);
-string getFileName(wchar_t* filePath);
-LPCWSTR getFileType(HANDLE file);
-BOOL printFileTxt(LPWSTR FileName);
 
 
-int main()
+
+
+string getFileName(wchar_t* filePath)
 {
-    setlocale(LC_ALL, "ru");
-    LPWSTR path = (LPWSTR)FILE_PATH;
-    cout << "\n======================================\n\n";
-    printFileInfo(path);
-    cout << "\n\n======================================";
-    printFileTxt(path);
-    cout << "\n======================================\n";
+    wstring ws(filePath);
+    string filename(ws.begin(), ws.end());
+    const size_t last_slash_idx = filename.find_last_of("\\/");
+    if (string::npos != last_slash_idx)
+        filename.erase(0, last_slash_idx + 1);
+    return filename;
 }
+
+
+
+
+LPCWSTR getFileType(HANDLE file)
+{
+    switch (GetFileType(file))
+    {
+    case FILE_TYPE_UNKNOWN:
+        return L"FILE_TYPE_UNKNOWN";
+    case FILE_TYPE_DISK:
+        return L"FILE_TYPE_DISK";
+    case FILE_TYPE_CHAR:
+        return L"FILE_TYPE_CHAR";
+    case FILE_TYPE_PIPE:
+        return L"FILE_TYPE_PIPE";
+    case FILE_TYPE_REMOTE:
+        return L"FILE_TYPE_REMOTE";
+    default:
+        return L"[ERROR]: WRITE FILE TYPE";
+    }
+}
+
 
 
 
@@ -79,33 +99,16 @@ BOOL printFileTxt(LPWSTR path)
 
 
 
-LPCWSTR getFileType(HANDLE file)
+
+
+int main()
 {
-    switch (GetFileType(file)) 
-    {
-    case FILE_TYPE_UNKNOWN:
-        return L"FILE_TYPE_UNKNOWN";
-    case FILE_TYPE_DISK:
-        return L"FILE_TYPE_DISK";
-    case FILE_TYPE_CHAR:
-        return L"FILE_TYPE_CHAR";
-    case FILE_TYPE_PIPE:
-        return L"FILE_TYPE_PIPE";
-    case FILE_TYPE_REMOTE:
-        return L"FILE_TYPE_REMOTE";
-    default:
-        return L"[ERROR]: WRITE FILE TYPE";
-    }
+    setlocale(LC_ALL, "ru");
+    LPWSTR path = (LPWSTR)FILE_PATH;
+    cout << "\n======================================\n\n";
+    printFileInfo(path);
+    cout << "\n\n======================================";
+    printFileTxt(path);
+    cout << "\n======================================\n";
 }
 
-
-
-string getFileName(wchar_t* filePath) 
-{
-    wstring ws(filePath);
-    string filename(ws.begin(), ws.end());
-    const size_t last_slash_idx = filename.find_last_of("\\/");
-    if (string::npos != last_slash_idx)
-        filename.erase(0, last_slash_idx + 1);
-    return filename;
-}
